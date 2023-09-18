@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "f3health",
+  "version": "${version}",
+  "name": "F3Health",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/DimasKama/F3Health"
+  },
+  "license": "MIT",
+  "icon": "assets/f3health/icon.png",
+  "environment": "client",
+  "mixins": [
+    "f3health.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
