@@ -1,33 +1,29 @@
 package dimaskama.f3health.mixin;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.DebugHud;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.Slice;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
 @Mixin(DebugHud.class)
 public class DebugHudMixin {
-    @Redirect(
+    @Inject(
             method = "getRightText",
             at = @At(
                     value = "INVOKE",
-                    target = "Ljava/util/List;add(Ljava/lang/Object;)Z"
-            ),
-            slice = @Slice(
-                    from = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;getType()Lnet/minecraft/entity/EntityType;")
+                    target = "Ljava/util/List;add(Ljava/lang/Object;)Z",
+                    ordinal = 10,
+                    shift = At.Shift.AFTER
             )
     )
-    private <E> boolean redirect(List<Object> instance, E e) {
-        instance.add(e);
-        Entity entity = MinecraftClient.getInstance().targetedEntity;
-        if (entity instanceof LivingEntity livingEntity)
-            instance.add(String.format("Health: %.3f/%.1f", livingEntity.getHealth(), livingEntity.getMaxHealth()));
-        return true;
+    private void onAdd(CallbackInfoReturnable<List<String>> cir, @Local List<String> list) {
+        if (MinecraftClient.getInstance().targetedEntity instanceof LivingEntity livingEntity)
+            list.add(String.format("Health: %.3f/%.1f", livingEntity.getHealth(), livingEntity.getMaxHealth()));
     }
 }
